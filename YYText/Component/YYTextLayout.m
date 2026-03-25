@@ -1522,12 +1522,15 @@ fail:
 }];
     
     [self _insideEmoji:line position:position block: ^(CGFloat left, CGFloat right, NSUInteger prev, NSUInteger next) {
-        if (isVertical) {
-            position = fabs(left - point.y) < fabs(right - point.y) < (right ? prev : next);
-        } else {
-            position = fabs(left - point.x) < fabs(right - point.x) < (right ? prev : next);
-        }
-    }];
+
+    CGFloat target = isVertical ? point.y : point.x;
+
+    CGFloat leftDiff = fabs(left - target);
+    CGFloat rightDiff = fabs(right - target);
+
+    position = (leftDiff < rightDiff) ? prev : next;
+
+}];
     
     if (position < _visibleRange.location) position = _visibleRange.location;
     else if (position > _visibleRange.location + _visibleRange.length) position = _visibleRange.location + _visibleRange.length;
