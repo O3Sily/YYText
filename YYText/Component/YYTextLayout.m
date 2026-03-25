@@ -1504,12 +1504,22 @@ fail:
     }
     
     [self _insideComposedCharacterSequences:line position:position block: ^(CGFloat left, CGFloat right, NSUInteger prev, NSUInteger next) {
-        if (isVertical) {
-            position = fabs(left - point.y) < fabs(right - point.y) < (right ? prev : next);
-        } else {
-            position = fabs(left - point.x) < fabs(right - point.x) < (right ? prev : next);
-        }
-    }];
+
+    if (isVertical) {
+        CGFloat leftDiff = fabs(left - point.y);
+        CGFloat rightDiff = fabs(right - point.y);
+        CGFloat limit = right ? prev : next;
+
+        position = (leftDiff < rightDiff) && (rightDiff < limit);
+    } else {
+        CGFloat leftDiff = fabs(left - point.x);
+        CGFloat rightDiff = fabs(right - point.x);
+        CGFloat limit = right ? prev : next;
+
+        position = (leftDiff < rightDiff) && (rightDiff < limit);
+    }
+
+}];
     
     [self _insideEmoji:line position:position block: ^(CGFloat left, CGFloat right, NSUInteger prev, NSUInteger next) {
         if (isVertical) {
